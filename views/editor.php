@@ -99,10 +99,29 @@ $csrfToken    = $csrfToken    ?? '';
 </div>
 
 <style>
-.i18n-editor .is-untranslated { background:#fff8e1; border-color:#ffd54f; }
-.i18n-editor .i18n-saving     { background:#e3f2fd; }
-.i18n-editor .i18n-saved      { background:#e8f5e9; }
-.i18n-editor .i18n-error      { background:#ffebee; border-color:#ef5350; }
+/* Inputs adapt to Bootstrap's current theme (light or dark) by using its
+   CSS variables instead of the default white form-control background. */
+.i18n-editor .i18n-input {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color, rgba(0,0,0,.15));
+    border-left-width: 3px;
+    border-left-color: transparent;
+}
+.i18n-editor .i18n-input:focus {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+.i18n-editor .i18n-input::placeholder {
+    color: var(--bs-secondary-color, #6c757d);
+    opacity: .7;
+}
+/* Subtle status accents — semi-transparent so they layer on light or dark. */
+.i18n-editor .is-untranslated   { border-left-color: #c79100; background-color: rgba(255, 193, 7, .08); }
+.i18n-editor .i18n-saving       { border-left-color: #0d6efd; background-color: rgba(13, 110, 253, .10); }
+.i18n-editor .i18n-saved        { border-left-color: #198754; background-color: rgba(25, 135, 84, .10); transition: background-color .2s; }
+.i18n-editor .i18n-error        { border-left-color: #dc3545; background-color: rgba(220, 53, 69, .12); }
+.i18n-editor .i18n-table code   { color: var(--bs-emphasis-color, inherit); }
 </style>
 
 <script>
