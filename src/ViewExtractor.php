@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipcannon\I18n;
+namespace Translatify;
 
 /**
  * Find translation candidates in templates that haven't been wrapped with

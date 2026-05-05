@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipcannon\I18n;
+namespace Translatify;
 
 /**
  * Scan a project tree for translation calls and produce a list of unique

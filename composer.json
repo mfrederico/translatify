@@ -1,5 +1,5 @@
 {
-    "name": "shipcannon/i18n",
+    "name": "translatify/translatify",
     "description": "Tiny English-as-key i18n helper + drop-in editor for FlightPHP/RedBean projects",
     "type": "library",
     "license": "proprietary",
@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Shipcannon\\I18n\\": "src/"
+            "Translatify\\": "src/"
         },
         "files": [
             "src/helpers.php"

@@ -17,7 +17,7 @@ $candidates = [
 foreach ($candidates as $a) {
     if (is_file($a)) { require $a; break; }
 }
-if (!class_exists(\Shipcannon\I18n\Scanner::class)) {
+if (!class_exists(\Translatify\Scanner::class)) {
     require __DIR__ . '/../src/Translator.php';
     require __DIR__ . '/../src/Editor.php';
     require __DIR__ . '/../src/Scanner.php';
@@ -44,8 +44,8 @@ $langDir = $opts['lang'];
 $locale = $opts['locale'] ?? 'en';
 $dryRun = isset($opts['dry-run']);
 
-$editor = new \Shipcannon\I18n\Editor($langDir);
-$scanner = new \Shipcannon\I18n\Scanner();
+$editor = new \Translatify\Editor($langDir);
+$scanner = new \Translatify\Scanner();
 
 if ($dryRun) {
     $found = $scanner->scan($roots);

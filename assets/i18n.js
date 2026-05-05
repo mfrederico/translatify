@@ -1,5 +1,5 @@
 /**
- * Shipcannon i18n — browser companion
+ * Translatify — browser companion
  *
  * Loads the same JSON dictionary the PHP Translator uses so client-side code
  * can call window.t('Save changes') with the same English-as-key contract.

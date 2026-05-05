@@ -1,6 +1,6 @@
 <?php
 
-use Shipcannon\I18n\Translator;
+use Translatify\Translator;
 
 if (!function_exists('t')) {
     /**

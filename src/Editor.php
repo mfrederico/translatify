@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipcannon\I18n;
+namespace Translatify;
 
 /**
  * Read/write JSON dictionaries for the translation editor UI.

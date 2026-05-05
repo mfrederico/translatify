@@ -1,6 +1,6 @@
 <?php
 
-namespace Shipcannon\I18n;
+namespace Translatify;
 
 /**
  * Tiny English-as-key translator.

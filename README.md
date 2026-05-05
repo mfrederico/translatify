@@ -1,4 +1,4 @@
-# shipcannon/i18n
+# translatify/translatify
 
 Tiny English-as-key translator + scanner + drop-in editor for FlightPHP /
 RedBean projects. Designed to be shared across multiple sibling apps via a
@@ -11,20 +11,20 @@ In each host project's `composer.json`:
 ```json
 {
   "repositories": [
-    { "type": "path", "url": "../shipcannon-i18n", "options": { "symlink": true } }
+    { "type": "path", "url": "../translatify", "options": { "symlink": true } }
   ],
   "require": {
-    "shipcannon/i18n": "*"
+    "translatify/translatify": "*"
   }
 }
 ```
 
-Then `composer require shipcannon/i18n`.
+Then `composer require translatify/translatify`.
 
 ## Bootstrap
 
 ```php
-use Shipcannon\I18n\Translator;
+use Translatify\Translator;
 
 Translator::register(__DIR__ . '/lang')
     ->setLocale($member->locale ?? 'en')
@@ -80,7 +80,7 @@ auth-checked routes. Minimal example:
 ```php
 // controls/Web/Translations.php (admin-only)
 public function index() {
-    $editor = new \Shipcannon\I18n\Editor(__DIR__ . '/../../lang');
+    $editor = new \Translatify\Editor(__DIR__ . '/../../lang');
     $data   = $editor->buildRowData('en');
     $this->render('translations/index', [
         'rows'         => $data['rows'],
@@ -97,7 +97,7 @@ public function index() {
 Then in `views/translations/index.php`:
 
 ```php
-<?php include __DIR__ . '/../../vendor/shipcannon/i18n/views/editor.php'; ?>
+<?php include __DIR__ . '/../../vendor/translatify/translatify/views/editor.php'; ?>
 ```
 
 The editor POSTs `action=set|remove|remove_all` to `$saveUrl`. The host

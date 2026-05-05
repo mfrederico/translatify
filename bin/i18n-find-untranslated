@@ -22,7 +22,7 @@ $candidates = [
 foreach ($candidates as $a) {
     if (is_file($a)) { require $a; break; }
 }
-if (!class_exists(\Shipcannon\I18n\ViewExtractor::class)) {
+if (!class_exists(\Translatify\ViewExtractor::class)) {
     require __DIR__ . '/../src/ViewExtractor.php';
 }
 
@@ -48,7 +48,7 @@ $roots = array_filter(array_map('trim', explode(',', $opts['root'])));
 $limit = isset($opts['limit']) ? max(1, (int)$opts['limit']) : 50;
 $asJson = isset($opts['json']);
 
-$entries = (new \Shipcannon\I18n\ViewExtractor())->scan($roots);
+$entries = (new \Translatify\ViewExtractor())->scan($roots);
 
 if ($asJson) {
     fwrite(STDOUT, json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");

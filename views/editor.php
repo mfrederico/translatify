@@ -1,10 +1,10 @@
 <?php
 /**
- * Shipcannon i18n — drop-in editor partial.
+ * Translatify — drop-in editor partial.
  *
  * The host project mounts its own auth-checked routes for these actions and
  * passes the data in. This file is pure presentation; all writes go through
- * the host's POST handler which calls Shipcannon\I18n\Editor.
+ * the host's POST handler which calls Translatify\Editor.
  *
  * Required variables when including this partial:
  *   $rows          array {source, translations: {locale: text}}
