@@ -17,6 +17,7 @@
         ]
     },
     "bin": [
-        "bin/i18n-scan"
+        "bin/i18n-scan",
+        "bin/i18n-find-untranslated"
     ]
 }

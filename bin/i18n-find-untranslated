@@ -1,0 +1,83 @@
+#!/usr/bin/env php
+<?php
+/**
+ * i18n-find-untranslated — report likely-translatable strings in templates
+ * that haven't been wrapped with t('...') yet. Heuristic; produces a list
+ * for human review.
+ *
+ * Usage:
+ *   bin/i18n-find-untranslated --root=views[,controls] [--limit=50] [--json]
+ *
+ * Default output: a top-N list grouped by source string, with file:line
+ * occurrences and the kind of element (placeholder, h1, button, ...).
+ *
+ * --json prints a machine-readable list of every unique candidate so the
+ * output can be piped into a UI later.
+ */
+
+$candidates = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php',
+];
+foreach ($candidates as $a) {
+    if (is_file($a)) { require $a; break; }
+}
+if (!class_exists(\Shipcannon\I18n\ViewExtractor::class)) {
+    require __DIR__ . '/../src/ViewExtractor.php';
+}
+
+$opts = getopt('', ['root:', 'limit::', 'json', 'help']);
+if (isset($opts['help']) || empty($opts['root'])) {
+    fwrite(STDERR, <<<HELP
+Usage: i18n-find-untranslated --root=<dir,dir> [--limit=50] [--json]
+
+  --root      Comma-separated directories to scan
+  --limit     Show this many top candidates in the human report (default 50)
+  --json      Print full machine-readable JSON list instead of the report
+
+Heuristic — finds:
+  - Attribute strings: placeholder, title, alt, aria-label
+  - Element text in: h1..h6, button, label, th, legend, caption,
+    summary, figcaption, option
+
+HELP);
+    exit(isset($opts['help']) ? 0 : 1);
+}
+
+$roots = array_filter(array_map('trim', explode(',', $opts['root'])));
+$limit = isset($opts['limit']) ? max(1, (int)$opts['limit']) : 50;
+$asJson = isset($opts['json']);
+
+$entries = (new \Shipcannon\I18n\ViewExtractor())->scan($roots);
+
+if ($asJson) {
+    fwrite(STDOUT, json_encode($entries, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    exit(0);
+}
+
+$totalUnique = count($entries);
+$totalOccurrences = array_sum(array_map(fn($e) => $e['count'], $entries));
+$totalFiles = count(array_unique(array_merge(...array_map(
+    fn($e) => array_map(fn($o) => $o['path'], $e['occurrences']),
+    $entries
+)) ?: []));
+
+fprintf(STDOUT, "=== Top %d translation candidates (of %d unique, %d total occurrences across %d files) ===\n\n",
+    min($limit, $totalUnique), $totalUnique, $totalOccurrences, $totalFiles);
+
+foreach (array_slice($entries, 0, $limit) as $entry) {
+    fprintf(STDOUT, "%4dx  %s\n", $entry['count'], $entry['source']);
+    // Show up to 3 occurrences with their kind
+    foreach (array_slice($entry['occurrences'], 0, 3) as $occ) {
+        fprintf(STDOUT, "       %s:%d  (%s)\n", $occ['path'], $occ['line'], $occ['kind']);
+    }
+    if (count($entry['occurrences']) > 3) {
+        fprintf(STDOUT, "       ...and %d more\n", count($entry['occurrences']) - 3);
+    }
+    fwrite(STDOUT, "\n");
+}
+
+if ($totalUnique > $limit) {
+    fprintf(STDOUT, "(%d more — pass --limit=%d or use --json for the full list)\n",
+        $totalUnique - $limit, $totalUnique);
+}
