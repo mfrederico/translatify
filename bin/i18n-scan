@@ -1,0 +1,75 @@
+#!/usr/bin/env php
+<?php
+/**
+ * i18n-scan — find t() / __() calls in source files and merge new keys
+ * into a locale's JSON dictionary.
+ *
+ * Usage:
+ *   bin/i18n-scan --root=views,controls --lang=lang [--locale=en] [--dry-run]
+ *   bin/i18n-scan --root=. --lang=lang --locale=en
+ */
+
+// Composer autoload — works whether installed in vendor/ or run from package
+$candidates = [
+    __DIR__ . '/../vendor/autoload.php',           // standalone install
+    __DIR__ . '/../../../autoload.php',            // installed in a host project
+];
+foreach ($candidates as $a) {
+    if (is_file($a)) { require $a; break; }
+}
+if (!class_exists(\Shipcannon\I18n\Scanner::class)) {
+    require __DIR__ . '/../src/Translator.php';
+    require __DIR__ . '/../src/Editor.php';
+    require __DIR__ . '/../src/Scanner.php';
+    require __DIR__ . '/../src/helpers.php';
+}
+
+$opts = getopt('', ['root:', 'lang:', 'locale::', 'dry-run', 'help']);
+if (isset($opts['help']) || empty($opts['root']) || empty($opts['lang'])) {
+    fwrite(STDERR, <<<HELP
+Usage: i18n-scan --root=<dir,dir> --lang=<lang-dir> [--locale=en] [--dry-run]
+
+  --root      Comma-separated directories to scan
+  --lang      Directory containing the JSON dictionaries
+  --locale    Locale to update (default: en) — new keys are added with the
+              source string as the default translation
+  --dry-run   Print what would change without writing
+
+HELP);
+    exit(isset($opts['help']) ? 0 : 1);
+}
+
+$roots = array_filter(array_map('trim', explode(',', $opts['root'])));
+$langDir = $opts['lang'];
+$locale = $opts['locale'] ?? 'en';
+$dryRun = isset($opts['dry-run']);
+
+$editor = new \Shipcannon\I18n\Editor($langDir);
+$scanner = new \Shipcannon\I18n\Scanner();
+
+if ($dryRun) {
+    $found = $scanner->scan($roots);
+    $existing = $editor->loadLocale($locale);
+    $new = [];
+    foreach ($found as $entry) {
+        if (!array_key_exists($entry['source'], $existing)) {
+            $new[] = $entry;
+        }
+    }
+    fprintf(STDOUT, "Scanned %d source string(s); %d new since %s/%s.json\n",
+        count($found), count($new), $langDir, $locale);
+    foreach ($new as $entry) {
+        fprintf(STDOUT, "  + %s\n", $entry['source']);
+        foreach (array_slice($entry['files'], 0, 3) as $f) {
+            fprintf(STDOUT, "      %s:%d\n", $f['path'], $f['line']);
+        }
+    }
+    exit(0);
+}
+
+$result = $scanner->syncToLocale($editor, $roots, $locale);
+fprintf(STDOUT, "Found %d source string(s); added %d new key(s) to %s/%s.json\n",
+    $result['total'], count($result['added']), $langDir, $locale);
+foreach ($result['added'] as $k) {
+    fprintf(STDOUT, "  + %s\n", $k);
+}

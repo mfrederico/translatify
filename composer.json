@@ -1,0 +1,22 @@
+{
+    "name": "shipcannon/i18n",
+    "description": "Tiny English-as-key i18n helper + drop-in editor for FlightPHP/RedBean projects",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.1",
+        "ext-json": "*",
+        "ext-intl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shipcannon\\I18n\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "bin": [
+        "bin/i18n-scan"
+    ]
+}
