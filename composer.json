@@ -2,7 +2,13 @@
     "name": "translatify/translatify",
     "description": "Tiny English-as-key i18n helper + drop-in editor for FlightPHP/RedBean projects",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mfrederico",
+            "email": "mfrederico@gmail.com"
+        }
+    ],
     "require": {
         "php": ">=8.1",
         "ext-json": "*",
